@@ -1,0 +1,6 @@
+runtime/**/*.exe
+runtime/**/*.dll
+runtime/**/*.pdb
+native/build/
+web/.connection-errors.log
+.env
