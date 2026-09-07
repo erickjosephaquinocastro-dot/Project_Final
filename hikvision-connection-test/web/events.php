@@ -6,9 +6,9 @@ header('Content-Type: application/json; charset=utf-8');
 
 $runtimeDirectory = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'Release';
 $eventFiles = [
-    'Estudiantes 1' => $runtimeDirectory . DIRECTORY_SEPARATOR . 'events-1.jsonl',
-    'Estudiantes 2' => $runtimeDirectory . DIRECTORY_SEPARATOR . 'events-2.jsonl',
-    'Docentes y personal' => $runtimeDirectory . DIRECTORY_SEPARATOR . 'events-3.jsonl',
+    'Bio1 (192.168.1.40)' => $runtimeDirectory . DIRECTORY_SEPARATOR . 'events-1.jsonl',
+    'Bio3 (192.168.1.91)' => $runtimeDirectory . DIRECTORY_SEPARATOR . 'events-2.jsonl',
+    'Bio2 (192.168.1.46)' => $runtimeDirectory . DIRECTORY_SEPARATOR . 'events-3.jsonl',
 ];
 $events = [];
 foreach ($eventFiles as $deviceName => $eventFile) {

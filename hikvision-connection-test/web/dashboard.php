@@ -14,7 +14,7 @@
 </head>
 <body>
     <h1>Eventos de acceso</h1>
-    <p>Actualizacion automatica cada 2 segundos. Antes de marcar, ejecuta <code>runtime/Release/iniciar-eventos.bat</code> y deja abierta esa ventana.</p>
+    <p>Actualizacion automatica cada 2 segundos. Antes de marcar, ejecuta <code>iniciar-todos-eventos.bat</code> y deja abiertas sus ventanas.</p>
     <table>
         <thead><tr><th>Fecha</th><th>Dispositivo</th><th>Tarjeta</th><th>Nombre</th><th>Empleado</th><th>Puerta</th><th>Lector</th><th>Verificacion</th><th>Tipo</th></tr></thead>
         <tbody id="events"><tr><td colspan="9" class="empty">Esperando eventos...</td></tr></tbody>

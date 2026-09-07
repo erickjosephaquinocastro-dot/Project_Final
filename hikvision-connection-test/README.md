@@ -39,13 +39,13 @@ La página web valida la entrada y devuelve el JSON del conector. Esta primera v
 
 ## Escuchar eventos ACS
 
-Por el momento se utilizaran los dos dispositivos de estudiantes. El segundo biometrico usa actualmente la IP `192.168.1.194`. Luego puedes agregar el biometrico de docentes configurando su IP. Para iniciar los dos actuales con un solo archivo:
+Se utilizaran los tres dispositivos actuales: Bio1 (`192.168.1.40`), Bio3 (`192.168.1.91`) y Bio2 (`192.168.1.46`). Para iniciar los tres con un solo archivo:
 
 ```text
 \.\iniciar-todos-eventos.bat
 ```
 
-Se abrirán dos ventanas, una por dispositivo de estudiantes. El usuario `admin` y la contraseña se solicitan una sola vez y se reutilizan para ambos equipos. Visita `http://localhost:8080/Project_Final/hikvision-connection-test/web/dashboard.php`. Cada acceso recibido se guardará en `events-1.jsonl` o `events-2.jsonl` y aparecerá con la etiqueta del dispositivo. No abras iVMS mientras los listeners estén activos.
+Se abrirán tres ventanas, una por biométrico. El usuario `admin` y la contraseña se solicitan una sola vez y se reutilizan para los tres equipos. Visita `http://localhost:8080/Project_Final/hikvision-connection-test/web/dashboard.php`. Cada acceso recibido se guardará en `events-1.jsonl`, `events-2.jsonl` o `events-3.jsonl` y aparecerá con la etiqueta del dispositivo. No abras iVMS mientras los listeners estén activos.
 
 ## Problemas comunes
 
