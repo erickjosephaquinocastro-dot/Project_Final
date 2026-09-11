@@ -13,6 +13,6 @@ Sistema de Control de Asistencia Biométrica de la I.E.T. María Inmaculada.
 
 ## Inicio local
 
-Abre `http://localhost:8080/Project_Final/`. La cuenta inicial local es `admin` con contraseña `Cambiar123!`; cámbiala antes de publicar modificando el hash de `app/credentials.php` o definiendo las variables de entorno `SACBAE_ADMIN_USERNAME` y `SACBAE_ADMIN_PASSWORD_HASH`.
+Abre la carpeta del proyecto desde Apache. En la instalación actual, mientras exista la carpeta duplicada, la dirección es `http://localhost:8080/Project_Final/Project_Final/`. La cuenta inicial local es `admin` con contraseña `Cambiar123!`; cámbiala antes de publicar modificando el hash de `app/credentials.php` o definiendo las variables de entorno `SACBAE_ADMIN_USERNAME` y `SACBAE_ADMIN_PASSWORD_HASH`.
 
 Para recibir eventos, ejecuta `scripts/iniciar-todos-eventos.bat` y después inicia sesión para abrir el panel.

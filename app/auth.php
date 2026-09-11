@@ -12,7 +12,19 @@ function sacbaeStartSession(): void
 function sacbaeBaseUrl(): string
 {
     $config = require __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
-    return $config['base_url'];
+    if ($config['base_url'] !== '') {
+        return $config['base_url'];
+    }
+
+    $scriptName = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    foreach (['/sacbae/', '/modules/hikvision/web/'] as $marker) {
+        $position = strpos($scriptName, $marker);
+        if ($position !== false) {
+            return substr($scriptName, 0, $position);
+        }
+    }
+
+    return '/Project_Final';
 }
 
 function sacbaeUrl(string $path = ''): string
