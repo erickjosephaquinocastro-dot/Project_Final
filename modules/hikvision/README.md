@@ -16,7 +16,7 @@ Este proyecto esta separado del SDK original. Su primera version solo valida:
 1. Abrir `native/hikvision-connector.sln` con Visual Studio 2026 o una versión que tenga C++ x64 y el toolset `v145`.
 2. Seleccionar `Release` y `x64`.
 3. Compilar el proyecto.
-4. Copiar las DLL del SDK desde `EN-HCNetSDK.../lib/` a `runtime/Release/`, conservando `HCNetSDKCom/`.
+4. Copiar las DLL del SDK desde `vendor/hikvision-sdk/EN-HCNetSDK.../lib/` a `runtime/Release/`, conservando `HCNetSDKCom/`.
 5. Confirmar que `hikvision-connector.exe` y `HCNetSDK.dll` quedan en la misma carpeta.
 
 El SDK original no se modifica.
@@ -42,10 +42,10 @@ La página web valida la entrada y devuelve el JSON del conector. Esta primera v
 Se utilizaran los tres dispositivos actuales: Bio1 (`192.168.1.40`), Bio3 (`192.168.1.91`) y Bio2 (`192.168.1.46`). Para iniciar los tres con un solo archivo:
 
 ```text
-\.\iniciar-todos-eventos.bat
+\.\scripts\iniciar-todos-eventos.bat
 ```
 
-Se abrirán tres ventanas, una por biométrico. El usuario `admin` y la contraseña se solicitan una sola vez y se reutilizan para los tres equipos. Visita `http://localhost:8080/Project_Final/hikvision-connection-test/web/dashboard.php`. Cada acceso recibido se guardará en `events-1.jsonl`, `events-2.jsonl` o `events-3.jsonl` y aparecerá con la etiqueta del dispositivo. No abras iVMS mientras los listeners estén activos.
+Se abrirán tres ventanas, una por biométrico. El usuario `admin` y la contraseña se solicitan una sola vez y se reutilizan para los tres equipos. Inicia sesión en SACBAE para abrir `http://localhost:8080/Project_Final/modules/hikvision/web/dashboard.php`. Cada acceso recibido se guardará en `events-1.jsonl`, `events-2.jsonl` o `events-3.jsonl` y aparecerá con la etiqueta del dispositivo. No abras iVMS mientras los listeners estén activos.
 
 ## Problemas comunes
 

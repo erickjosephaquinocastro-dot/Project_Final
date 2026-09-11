@@ -62,7 +62,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         <label>Contraseña <input name="password" type="password" required></label>
         <button type="submit">Probar conexion</button>
     </form>
-    <p><a href="/Project_Final/hikvision-connection-test/web/dashboard.php">Ver eventos en tiempo real</a></p>
+    <p><a href="/Project_Final/modules/hikvision/web/dashboard.php">Ver eventos en tiempo real</a></p>
     <?php if (is_array($result)): ?>
         <h2 class="<?= !empty($result['ok']) ? 'success' : 'error' ?>"><?= !empty($result['ok']) ? 'Conexion exitosa' : 'No se pudo conectar' ?></h2>
         <pre><?= htmlspecialchars((string) json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?></pre>

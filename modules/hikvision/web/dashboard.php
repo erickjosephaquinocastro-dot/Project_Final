@@ -1,3 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'auth.php';
+sacbaeRequireAuthentication();
+?>
 <!doctype html>
 <html lang="es">
 <head>
@@ -14,7 +21,8 @@
 </head>
 <body>
     <h1>Eventos de acceso</h1>
-    <p>Actualizacion automatica cada 2 segundos. Antes de marcar, ejecuta <code>iniciar-todos-eventos.bat</code> y deja abiertas sus ventanas.</p>
+    <p>Actualización automática cada 2 segundos. Antes de marcar, ejecuta <code>scripts/iniciar-todos-eventos.bat</code> y deja abiertas sus ventanas.</p>
+    <p><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/'), ENT_QUOTES, 'UTF-8') ?>">Inicio</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/logout.php'), ENT_QUOTES, 'UTF-8') ?>">Cerrar sesión</a></p>
     <table>
         <thead><tr><th>Fecha</th><th>Dispositivo</th><th>Tarjeta</th><th>Nombre</th><th>Empleado</th><th>Puerta</th><th>Lector</th><th>Verificacion</th><th>Tipo</th></tr></thead>
         <tbody id="events"><tr><td colspan="9" class="empty">Esperando eventos...</td></tr></tbody>
