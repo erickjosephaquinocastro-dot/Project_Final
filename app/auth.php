@@ -45,3 +45,17 @@ function sacbaeRequireAuthentication(): void
         exit;
     }
 }
+
+function sacbaeIsAdministrator(): bool
+{
+    sacbaeStartSession();
+    return sacbaeIsAuthenticated() && ($_SESSION['sacbae_role'] ?? '') === 'admin';
+}
+
+function sacbaeRequireAdministrator(): void
+{
+    if (!sacbaeIsAdministrator()) {
+        http_response_code(403);
+        exit('No tienes permisos para realizar esta acción.');
+    }
+}

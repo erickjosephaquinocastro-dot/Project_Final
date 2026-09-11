@@ -27,15 +27,15 @@ sacbaeRequireAuthentication();
 <body>
     <h1>Panel de biométricos</h1>
     <p class="muted">El estado se actualiza cada 5 segundos. Para conectar los equipos, ejecuta <code>scripts/iniciar-todos-eventos.bat</code> y deja abiertas sus ventanas.</p>
-    <p class="nav"><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/'), ENT_QUOTES, 'UTF-8') ?>">Inicio</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/logout.php'), ENT_QUOTES, 'UTF-8') ?>">Cerrar sesión</a></p>
+    <p class="nav"><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/'), ENT_QUOTES, 'UTF-8') ?>">Inicio</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/students.php'), ENT_QUOTES, 'UTF-8') ?>">Estudiantes</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/devices.php'), ENT_QUOTES, 'UTF-8') ?>">Dispositivos</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/admins.php'), ENT_QUOTES, 'UTF-8') ?>">Administradores</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/logout.php'), ENT_QUOTES, 'UTF-8') ?>">Cerrar sesión</a></p>
 
     <section class="device-grid" id="devices" aria-live="polite"><p class="empty">Comprobando dispositivos...</p></section>
 
     <section class="table-card">
         <h2>Eventos de acceso</h2>
         <table>
-            <thead><tr><th>Fecha</th><th>Dispositivo</th><th>Tarjeta</th><th>Nombre</th><th>Empleado</th><th>Puerta</th><th>Lector</th><th>Verificación</th><th>Tipo</th></tr></thead>
-            <tbody id="events"><tr><td colspan="9" class="empty">Esperando eventos...</td></tr></tbody>
+            <thead><tr><th>Fecha</th><th>Dispositivo</th><th>Tarjeta</th><th>Nombre</th><th>Correo institucional</th><th>Person ID</th><th>Puerta</th><th>Lector</th><th>Verificación</th><th>Tipo</th></tr></thead>
+            <tbody id="events"><tr><td colspan="10" class="empty">Esperando eventos...</td></tr></tbody>
         </table>
     </section>
 
@@ -52,7 +52,7 @@ sacbaeRequireAuthentication();
                 if (!payload.ok) throw new Error('No autorizado');
                 devicesContainer.innerHTML = payload.devices.map(device => {
                     const eventTime = device.last_event_at ? new Date(device.last_event_at).toLocaleString('es-CO') : 'Sin eventos registrados';
-                    return `<article class="device-card"><h2>${text(device.name)}</h2><p>${text(device.host)}:8000</p><span class="status ${device.status}">${statusLabel[device.status]}</span><p>Última actividad: ${eventTime}</p></article>`;
+                    return `<article class="device-card"><h2>${text(device.name)}</h2><p>${text(device.host)}:${text(device.port)}</p><span class="status ${device.status}">${statusLabel[device.status]}</span><p>Última actividad: ${eventTime}</p></article>`;
                 }).join('');
             } catch (error) {
                 devicesContainer.innerHTML = '<p class="empty">No se pudo comprobar el estado de los dispositivos.</p>';
@@ -65,20 +65,20 @@ sacbaeRequireAuthentication();
                 const payload = await response.json();
                 eventsBody.innerHTML = '';
                 if (!payload.events || payload.events.length === 0) {
-                    eventsBody.innerHTML = '<tr><td colspan="9" class="empty">Esperando eventos...</td></tr>';
+                    eventsBody.innerHTML = '<tr><td colspan="10" class="empty">Esperando eventos...</td></tr>';
                     return;
                 }
                 payload.events.forEach(event => {
                     const row = document.createElement('tr');
                     const date = `${event.year}-${String(event.month).padStart(2, '0')}-${String(event.day).padStart(2, '0')} ${String(event.hour).padStart(2, '0')}:${String(event.minute).padStart(2, '0')}:${String(event.second).padStart(2, '0')}`;
                     const employeeName = event.employee_name && event.employee_name.trim() ? event.employee_name : 'Sin nombre';
-                    [date, event.device_name, event.card_number, employeeName, event.employee_number, event.door, event.reader, event.verify, event.event_type].forEach(value => {
+                    [date, event.device_name, event.card_number, employeeName, event.institutional_email, event.employee_number, event.door, event.reader, event.verify, event.event_type].forEach(value => {
                         const cell = document.createElement('td'); cell.textContent = text(value); row.appendChild(cell);
                     });
                     eventsBody.appendChild(row);
                 });
             } catch (error) {
-                eventsBody.innerHTML = '<tr><td colspan="9" class="empty">No se pudo leer el archivo de eventos.</td></tr>';
+                eventsBody.innerHTML = '<tr><td colspan="10" class="empty">No se pudo leer el archivo de eventos.</td></tr>';
             }
         }
 

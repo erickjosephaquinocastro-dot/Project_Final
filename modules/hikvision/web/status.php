@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'auth.php';
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'database.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -19,6 +20,20 @@ $devices = [
     ['name' => 'Bio3', 'host' => '192.168.1.91', 'event_file' => 'events-2.jsonl'],
     ['name' => 'Bio2', 'host' => '192.168.1.46', 'event_file' => 'events-3.jsonl'],
 ];
+$database = sacbaeDatabase();
+if ($database !== null) {
+    $configuredDevices = $database->query(
+        'SELECT label, host, sdk_port, event_file FROM biometric_devices WHERE active = 1 ORDER BY id'
+    )->fetchAll();
+    if ($configuredDevices !== []) {
+        $devices = array_map(static fn (array $device): array => [
+            'name' => $device['label'],
+            'host' => $device['host'],
+            'port' => (int) $device['sdk_port'],
+            'event_file' => $device['event_file'],
+        ], $configuredDevices);
+    }
+}
 
 $listenerCount = null;
 if ($connectorAvailable && function_exists('shell_exec')) {
@@ -35,6 +50,7 @@ foreach ($devices as &$device) {
         ? 'connector_missing'
         : (($listenerCount ?? 0) >= count($devices) ? 'listening' : 'waiting_listener');
     unset($device['event_file']);
+    $device['port'] = $device['port'] ?? 8000;
 }
 unset($device);
 
