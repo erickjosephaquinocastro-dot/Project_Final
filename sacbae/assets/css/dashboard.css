@@ -1,0 +1,687 @@
+/* =========================================================
+   SACBAE — PANEL INTERNO
+   Estilos para las páginas del sistema (dashboard)
+   I.E.T. MARÍA INMACULADA
+   Tema: Celeste Institucional (Claro)
+   ========================================================= */
+
+/* =========================
+   PAGE BASE
+   ========================= */
+
+.dash-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f4f8fb; /* Gris-celeste muy claro */
+    color: #334155; /* Gris oscuro para texto */
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+}
+
+/* =========================
+   BACKGROUND
+   ========================= */
+
+.dash-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 35%, rgba(14, 165, 233, 0.04), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(2, 132, 199, 0.03), transparent 28%),
+        linear-gradient(135deg, #f8fafc 0%, #f0f9ff 50%, #e0f2fe 100%);
+}
+
+/* GRID */
+.dash-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(2, 132, 199, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(2, 132, 199, 0.04) 1px, transparent 1px);
+    background-size: 55px 55px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+}
+
+/* GLOW */
+.dash-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+}
+.dash-glow-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: 10%;
+    background: rgba(14, 165, 233, 0.15);
+}
+.dash-glow-2 {
+    width: 250px;
+    height: 250px;
+    bottom: -80px;
+    left: 5%;
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.dash-navbar {
+    position: relative;
+    z-index: 100;
+    padding: 14px 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(14, 165, 233, 0.15);
+    box-shadow: 0 4px 20px rgba(2, 132, 199, 0.04);
+}
+
+.dash-navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.dash-navbar .brand-title {
+    color: #0369a1;
+}
+
+.dash-navbar small {
+    color: #64748b;
+}
+
+/* NAV LINKS */
+.dash-nav-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dash-nav-links a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: 9px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.dash-nav-links a:hover {
+    color: #0284c7;
+    background: rgba(14, 165, 233, 0.08);
+}
+
+.dash-nav-links a.active {
+    color: #0369a1;
+    background: #e0f2fe;
+}
+
+.dash-nav-links a:focus-visible,
+.dash-btn:focus-visible,
+.dash-input:focus-visible {
+    outline: 3px solid rgba(14, 165, 233, .35);
+    outline-offset: 2px;
+}
+
+.dash-nav-logout {
+    color: #ef4444 !important;
+}
+
+.dash-nav-logout:hover {
+    background: #fee2e2 !important;
+    color: #dc2626 !important;
+}
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.dash-main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    padding: 40px 0 60px;
+}
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.dash-page-header {
+    margin-bottom: 32px;
+}
+
+.dash-page-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    border-radius: 50px;
+    color: #0284c7;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.dash-page-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.dash-page-header h1 {
+    margin: 0;
+    color: #0f172a;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+}
+
+.dash-page-header h1 span {
+    background: linear-gradient(90deg, #0284c7 0%, #0ea5e9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.dash-page-header p {
+    margin: 8px 0 0;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.dash-card {
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 35px rgba(2, 132, 199, 0.05);
+}
+
+.dash-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.dash-card-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    color: #0f172a;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dash-card-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    color: #0284c7;
+    background: #f0f9ff;
+    border: 1px solid #e0f2fe;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+.dash-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.dash-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.dash-form-group.full {
+    grid-column: 1 / -1;
+}
+
+.dash-label {
+    color: #475569;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dash-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dash-input-wrapper > i {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    font-size: 15px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.dash-input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    border-radius: 11px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.dash-input:focus {
+    background: #ffffff;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px #e0f2fe;
+}
+
+.dash-input::placeholder {
+    color: #94a3b8;
+}
+
+.dash-input.no-icon {
+    padding-left: 14px;
+}
+
+.dash-select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 11px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+.dash-select:focus {
+    background-color: #ffffff;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px #e0f2fe;
+}
+
+.dash-select option {
+    background: #ffffff;
+    color: #1e293b;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.dash-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 11px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.dash-btn:hover {
+    transform: translateY(-2px);
+}
+
+.dash-btn-primary {
+    color: white;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.2);
+}
+
+.dash-btn-primary:hover {
+    box-shadow: 0 12px 25px rgba(2, 132, 199, 0.3);
+}
+
+.dash-btn-secondary {
+    color: #0369a1;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+}
+
+.dash-btn-secondary:hover {
+    background: #bae6fd;
+    color: #0c4a6e;
+    box-shadow: 0 6px 15px rgba(2, 132, 199, 0.1);
+}
+
+.dash-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.dash-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    animation: dashAlertIn 0.3s ease;
+}
+
+@keyframes dashAlertIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dash-alert-error {
+    color: #991b1b;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+}
+
+.dash-alert-success {
+    color: #065f46;
+    background: #d1fae5;
+    border: 1px solid #a7f3d0;
+}
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+.dash-table-wrapper {
+    overflow-x: auto;
+    margin-top: 5px;
+}
+
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dash-table th,
+.dash-table td {
+    padding: 14px;
+    text-align: left;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.dash-table thead th {
+    color: #0369a1;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: #f0f9ff;
+    border-bottom: 2px solid #e0f2fe;
+}
+
+.dash-table thead th:first-child { border-radius: 10px 0 0 0; }
+.dash-table thead th:last-child { border-radius: 0 10px 0 0; }
+
+.dash-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s ease;
+}
+
+.dash-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.dash-table tbody td {
+    color: #334155;
+}
+
+.dash-table .empty-row td {
+    padding: 28px 14px;
+    text-align: center;
+    color: #64748b;
+    font-style: italic;
+}
+
+.dash-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.dash-badge-active {
+    color: #059669;
+    background: #d1fae5;
+}
+.dash-badge-inactive {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+/* =========================================================
+   DEVICE CARDS (Dashboard)
+   ========================================================= */
+
+.dash-device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.dash-device-card {
+    position: relative;
+    padding: 22px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 8px 25px rgba(2, 132, 199, 0.05);
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.dash-device-card:hover {
+    transform: translateY(-3px);
+    border-color: #bae6fd;
+    box-shadow: 0 12px 35px rgba(2, 132, 199, 0.1);
+}
+
+.dash-device-card h3 {
+    margin: 0 0 6px;
+    color: #0f172a;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.dash-device-card .device-ip {
+    margin: 0 0 12px;
+    color: #64748b;
+    font-size: 13px;
+    font-family: "Consolas", monospace;
+}
+
+.dash-device-card .device-last {
+    margin: 12px 0 0;
+    color: #475569;
+    font-size: 12px;
+}
+
+.dash-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.dash-status::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+.dash-status.listening { color: #059669; background: #d1fae5; }
+.dash-status.listening::before { background: #10b981; }
+.dash-status.waiting_listener { color: #d97706; background: #fef3c7; }
+.dash-status.waiting_listener::before { background: #f59e0b; }
+.dash-status.connector_missing { color: #dc2626; background: #fee2e2; }
+.dash-status.connector_missing::before { background: #ef4444; }
+
+/* =========================================================
+   PRE / CODE BLOCKS
+   ========================================================= */
+
+.dash-pre {
+    padding: 18px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 13px;
+    font-family: "Consolas", monospace;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+.dash-code {
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: #f1f5f9;
+    color: #0369a1;
+    font-size: 12px;
+    font-family: "Consolas", monospace;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.dash-footer {
+    position: relative;
+    z-index: 2;
+    padding: 22px 0;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dash-footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.dash-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #334155;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.dash-footer-brand i {
+    color: #0284c7;
+    font-size: 18px;
+}
+
+/* =========================================================
+   HELPERS & RESPONSIVE
+   ========================================================= */
+
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+
+@media (max-width: 991px) {
+    .dash-navbar .container { flex-direction: column; align-items: flex-start; }
+    .dash-nav-links {
+        width: 100%;
+        flex-wrap: nowrap;
+        padding-bottom: 2px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+    .dash-nav-links li { flex: 0 0 auto; }
+    .dash-form { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 576px) {
+    .dash-navbar { padding: 10px 0; }
+    .dash-nav-links a { padding: 8px 10px; font-size: 12px; }
+    .dash-main { padding: 28px 0 40px; }
+    .dash-card { padding: 20px; }
+    .dash-card-header { margin-bottom: 18px; padding-bottom: 14px; }
+    .dash-card-title { font-size: 16px; }
+    .dash-card-icon { width: 36px; height: 36px; font-size: 16px; }
+    .dash-form { grid-template-columns: 1fr; }
+    .dash-page-header h1 { font-size: 26px; }
+    .dash-page-header p { font-size: 13px; }
+    .dash-table th, .dash-table td { padding: 10px; font-size: 12px; }
+    .dash-device-grid { grid-template-columns: 1fr; }
+    .dash-footer-content { flex-direction: column; text-align: center; }
+    .dash-btn { width: 100%; }
+}

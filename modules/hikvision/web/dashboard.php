@@ -5,39 +5,106 @@ declare(strict_types=1);
 require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'auth.php';
 sacbaeRequireAuthentication();
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Panel biométrico | SACBAE</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1100px; margin: 32px auto; padding: 0 18px; color: #17212b; background: #f8fafc; }
-        h1 { margin-bottom: 6px; }.muted { color: #64748b; }
-        .nav { margin: 16px 0 22px; }.nav a { color: #0369a1; text-decoration: none; }
-        .device-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 18px 0 26px; }
-        .device-card, .table-card { border: 1px solid #dbe3ea; border-radius: 10px; padding: 16px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
-        .device-card h2 { font-size: 1rem; margin: 0 0 7px; }.device-card p { margin: 7px 0; font-size: .9rem; color: #475569; }
-        .status { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .82rem; }.status::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #94a3b8; }
-        .status.listening { color: #15803d; }.status.listening::before { background: #22c55e; }.status.waiting_listener { color: #b45309; }.status.waiting_listener::before { background: #f59e0b; }.status.connector_missing { color: #b91c1c; }.status.connector_missing::before { background: #ef4444; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .9rem; } th, td { border-bottom: 1px solid #dbe3ea; padding: 10px 8px; text-align: left; } th { background: #f1f5f9; } .empty { color: #64748b; padding: 20px 0; }
-        @media (max-width: 700px) { .table-card { overflow-x: auto; } table { min-width: 800px; } }
-    </style>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?= htmlspecialchars(sacbaeUrl('sacbae/assets/css/estilos.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sacbaeUrl('sacbae/assets/css/dashboard.css'), ENT_QUOTES, 'UTF-8') ?>">
 </head>
-<body>
-    <h1>Panel de biométricos</h1>
-    <p class="muted">El estado se actualiza cada 5 segundos. Para conectar los equipos, ejecuta <code>scripts/iniciar-todos-eventos.bat</code> y deja abiertas sus ventanas.</p>
-    <p class="nav"><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/'), ENT_QUOTES, 'UTF-8') ?>">Inicio</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/students.php'), ENT_QUOTES, 'UTF-8') ?>">Estudiantes</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/devices.php'), ENT_QUOTES, 'UTF-8') ?>">Dispositivos</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/admins.php'), ENT_QUOTES, 'UTF-8') ?>">Administradores</a> · <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/logout.php'), ENT_QUOTES, 'UTF-8') ?>">Cerrar sesión</a></p>
+<body class="dash-page">
+    <!-- Background -->
+    <div class="dash-bg">
+        <div class="dash-grid"></div>
+        <div class="dash-glow dash-glow-1"></div>
+        <div class="dash-glow dash-glow-2"></div>
+    </div>
 
-    <section class="device-grid" id="devices" aria-live="polite"><p class="empty">Comprobando dispositivos...</p></section>
+    <!-- Navbar -->
+    <nav class="dash-navbar">
+        <div class="container">
+            <a href="<?= htmlspecialchars(sacbaeUrl('sacbae/'), ENT_QUOTES, 'UTF-8') ?>" class="navbar-brand d-flex align-items-center gap-2" style="text-decoration:none">
+                <div class="logo-box"><i class="bi bi-fingerprint"></i></div>
+                <div>
+                    <span class="brand-title">SACBAE</span>
+                    <small>Sistema Biométrico</small>
+                </div>
+            </a>
+            <ul class="dash-nav-links">
+                <li><a href="<?= htmlspecialchars(sacbaeUrl('modules/hikvision/web/dashboard.php'), ENT_QUOTES, 'UTF-8') ?>" class="active"><i class="bi bi-grid-1x2"></i> Panel</a></li>
+                <li><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/students.php'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-people"></i> Estudiantes</a></li>
+                <li><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/devices.php'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-router"></i> Dispositivos</a></li>
+                <li><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/admins.php'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-shield-lock"></i> Administradores</a></li>
+                <li><a href="<?= htmlspecialchars(sacbaeUrl('sacbae/logout.php'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </nav>
 
-    <section class="table-card">
-        <h2>Eventos de acceso</h2>
-        <table>
-            <thead><tr><th>Fecha</th><th>Dispositivo</th><th>Tarjeta</th><th>Nombre</th><th>Correo institucional</th><th>Person ID</th><th>Puerta</th><th>Lector</th><th>Verificación</th><th>Tipo</th></tr></thead>
-            <tbody id="events"><tr><td colspan="10" class="empty">Esperando eventos...</td></tr></tbody>
-        </table>
-    </section>
+    <!-- Main -->
+    <main class="dash-main">
+        <div class="container">
+            <!-- Page header -->
+            <div class="dash-page-header">
+                <span class="dash-page-label"><span class="dot"></span> MONITOREO EN TIEMPO REAL</span>
+                <h1>Panel <span>Biométrico</span></h1>
+                <p>El estado se actualiza cada 5 segundos. Para conectar los equipos, ejecuta <code class="dash-code">scripts/iniciar-todos-eventos.bat</code>.</p>
+            </div>
+
+            <!-- Devices grid -->
+            <div id="devices" class="dash-device-grid" aria-live="polite">
+                <p class="empty text-muted">Comprobando dispositivos...</p>
+            </div>
+
+            <!-- Content cards -->
+            <div class="dash-card mt-4">
+                <div class="dash-card-header">
+                    <h2 class="dash-card-title"><span class="dash-card-icon"><i class="bi bi-activity"></i></span> Eventos de acceso</h2>
+                </div>
+                
+                <div class="dash-table-wrapper">
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Dispositivo</th>
+                                <th>Tarjeta</th>
+                                <th>Nombre</th>
+                                <th>Correo institucional</th>
+                                <th>Person ID</th>
+                                <th>Puerta</th>
+                                <th>Lector</th>
+                                <th>Verificación</th>
+                                <th>Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events">
+                            <tr><td colspan="10" class="empty text-center text-muted py-4">Esperando eventos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dash-footer">
+        <div class="container">
+            <div class="dash-footer-content">
+                <span class="dash-footer-brand"><i class="bi bi-fingerprint"></i> SACBAE</span>
+                <span>I.E.T. María Inmaculada</span>
+                <span>&copy; <?php echo date("Y"); ?></span>
+            </div>
+        </div>
+    </footer>
 
     <script>
         const eventsBody = document.getElementById('events');
@@ -52,10 +119,15 @@ sacbaeRequireAuthentication();
                 if (!payload.ok) throw new Error('No autorizado');
                 devicesContainer.innerHTML = payload.devices.map(device => {
                     const eventTime = device.last_event_at ? new Date(device.last_event_at).toLocaleString('es-CO') : 'Sin eventos registrados';
-                    return `<article class="device-card"><h2>${text(device.name)}</h2><p>${text(device.host)}:${text(device.port)}</p><span class="status ${device.status}">${statusLabel[device.status]}</span><p>Última actividad: ${eventTime}</p></article>`;
+                    return `<article class="dash-device-card">
+                        <h3>${text(device.name)}</h3>
+                        <p class="device-ip">${text(device.host)}:${text(device.port)}</p>
+                        <span class="dash-status ${device.status}">${statusLabel[device.status]}</span>
+                        <p class="device-last">Última actividad: ${eventTime}</p>
+                    </article>`;
                 }).join('');
             } catch (error) {
-                devicesContainer.innerHTML = '<p class="empty">No se pudo comprobar el estado de los dispositivos.</p>';
+                devicesContainer.innerHTML = '<p class="empty text-muted">No se pudo comprobar el estado de los dispositivos.</p>';
             }
         }
 
@@ -65,7 +137,7 @@ sacbaeRequireAuthentication();
                 const payload = await response.json();
                 eventsBody.innerHTML = '';
                 if (!payload.events || payload.events.length === 0) {
-                    eventsBody.innerHTML = '<tr><td colspan="10" class="empty">Esperando eventos...</td></tr>';
+                    eventsBody.innerHTML = '<tr><td colspan="10" class="empty text-center text-muted py-4">Esperando eventos...</td></tr>';
                     return;
                 }
                 payload.events.forEach(event => {
@@ -78,7 +150,7 @@ sacbaeRequireAuthentication();
                     eventsBody.appendChild(row);
                 });
             } catch (error) {
-                eventsBody.innerHTML = '<tr><td colspan="10" class="empty">No se pudo leer el archivo de eventos.</td></tr>';
+                eventsBody.innerHTML = '<tr><td colspan="10" class="empty text-center text-danger py-4">No se pudo leer el archivo de eventos.</td></tr>';
             }
         }
 
