@@ -2,9 +2,10 @@
 setlocal
 cd /d "%~dp0"
 
-set "HOST1=192.168.1.40"
-set "HOST2=192.168.1.91"
-set "HOST3=192.168.1.46"
+if exist "%~dp0devices.ini" for /f "usebackq tokens=1,* delims==" %%A in ("%~dp0devices.ini") do set "%%A=%%B"
+if "%HOST1%"=="" set "HOST1=192.168.1.40"
+if "%HOST2%"=="" set "HOST2=192.168.1.91"
+if "%HOST3%"=="" set "HOST3=192.168.1.46"
 set /p "PASSWORD=Contrasena comun de los tres biometricos: "
 if "%PASSWORD%"=="" goto :missingPassword
 

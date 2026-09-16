@@ -1,8 +1,9 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-if "%~1"=="" (set "HOST=192.168.1.46") else (set "HOST=%~1")
-set "PORT=8000"
+if exist "%~dp0devices.ini" for /f "usebackq tokens=1,* delims==" %%A in ("%~dp0devices.ini") do set "%%A=%%B"
+if "%~1"=="" (set "HOST=%HOST3%") else (set "HOST=%~1")
+if "%PORT3%"=="" (set "PORT=8000") else (set "PORT=%PORT3%")
 set "USER=admin"
 set "EVENTS=%~dp0events-3.jsonl"
 

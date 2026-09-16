@@ -11,6 +11,8 @@ $error = '';
 $success = '';
 $testResult = null;
 $deviceFiles = ['Bio1' => 'events-1.jsonl', 'Bio3' => 'events-2.jsonl', 'Bio2' => 'events-3.jsonl'];
+$runtimeDirectory = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'hikvision' . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'Release';
+$deviceConfigPath = $runtimeDirectory . DIRECTORY_SEPARATOR . 'devices.ini';
 
 if ($database === null) {
     $error = 'Inicia MySQL desde XAMPP para configurar los biométricos.';
@@ -59,6 +61,21 @@ if ($database === null) {
 }
 
 $devices = $database === null ? [] : $database->query('SELECT label, host, sdk_port FROM biometric_devices WHERE active = 1 ORDER BY id')->fetchAll();
+if ($devices !== []) {
+    $configLines = [];
+    foreach (['Bio1' => 1, 'Bio3' => 2, 'Bio2' => 3] as $label => $number) {
+        foreach ($devices as $device) {
+            if ($device['label'] === $label) {
+                $configLines[] = "HOST{$number}={$device['host']}";
+                $configLines[] = "PORT{$number}={$device['sdk_port']}";
+                break;
+            }
+        }
+    }
+    if ($configLines !== []) {
+        file_put_contents($deviceConfigPath, implode(PHP_EOL, $configLines) . PHP_EOL, LOCK_EX);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
