@@ -68,6 +68,7 @@ sacbaeRequireAuthentication();
             <div class="dash-card mt-4">
                 <div class="dash-card-header">
                     <h2 class="dash-card-title"><span class="dash-card-icon"><i class="bi bi-activity"></i></span> Eventos de acceso</h2>
+                    <span id="events-database-status" class="text-muted small">Comprobando base de datos...</span>
                 </div>
                 
                 <div class="dash-table-wrapper">
@@ -135,6 +136,13 @@ sacbaeRequireAuthentication();
             try {
                 const response = await fetch('events.php', { cache: 'no-store' });
                 const payload = await response.json();
+                const databaseStatus = document.getElementById('events-database-status');
+                if (databaseStatus) {
+                    databaseStatus.textContent = payload.database_connected
+                        ? 'Base de datos conectada'
+                        : (payload.database_error || 'Base de datos desconectada');
+                    databaseStatus.className = payload.database_connected ? 'text-success small' : 'text-danger small';
+                }
                 eventsBody.innerHTML = '';
                 if (!payload.events || payload.events.length === 0) {
                     eventsBody.innerHTML = '<tr><td colspan="10" class="empty text-center text-muted py-4">Esperando eventos...</td></tr>';
