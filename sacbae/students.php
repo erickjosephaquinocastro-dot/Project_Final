@@ -10,25 +10,95 @@ sacbaeRequireAdministrator();
 $database = sacbaeDatabase();
 $error = '';
 $success = '';
+$syncResult = null;
+$devices = $database === null ? [] : $database->query(
+    'SELECT label, host, sdk_port FROM biometric_devices WHERE active = 1 ORDER BY id'
+)->fetchAll();
 
 if ($database === null) {
     $error = 'No fue posible conectar con la base de datos sacbae.';
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = (string) ($_POST['action'] ?? 'register');
+    if ($action === 'sync') {
+        $deviceLabel = trim((string) ($_POST['device_label'] ?? ''));
+        $username = trim((string) ($_POST['username'] ?? 'admin'));
+        $password = (string) ($_POST['password'] ?? '');
+        $device = null;
+        foreach ($devices as $configuredDevice) {
+            if ($configuredDevice['label'] === $deviceLabel) {
+                $device = $configuredDevice;
+                break;
+            }
+        }
+        $connector = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'hikvision' . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'Release' . DIRECTORY_SEPARATOR . 'hikvision-connector.exe';
+        if ($device === null || $username === '' || $password === '') {
+            $error = 'Selecciona un biométrico e indica usuario y contraseña.';
+        } elseif (!is_file($connector)) {
+            $error = 'No se encontró el conector Hikvision compilado.';
+        } else {
+            $command = escapeshellarg($connector) . ' --sync ' . escapeshellarg($device['host']) . ' ' . escapeshellarg((string) $device['sdk_port']) . ' ' . escapeshellarg($username);
+            $process = proc_open($command, [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+            if (is_resource($process)) {
+                fwrite($pipes[0], $password . PHP_EOL);
+                fclose($pipes[0]);
+                $output = stream_get_contents($pipes[1]);
+                fclose($pipes[1]);
+                fclose($pipes[2]);
+                proc_close($process);
+                $lines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $output))));
+                $syncResult = json_decode((string) end($lines), true);
+                if (is_array($syncResult) && !empty($syncResult['ok']) && isset($syncResult['students'])) {
+                    $statement = $database->prepare(
+                        'INSERT INTO students (person_id, dni, full_name, institutional_email, card_number)
+                         VALUES (:person_id, :dni, :full_name, :institutional_email, :card_number)
+                         ON DUPLICATE KEY UPDATE full_name = VALUES(full_name), card_number = VALUES(card_number), active = 1'
+                    );
+                    $imported = 0;
+                    foreach ($syncResult['students'] as $student) {
+                        $personId = trim((string) ($student['person_id'] ?? ''));
+                        $fullName = trim((string) ($student['full_name'] ?? ''));
+                        $cardNumber = trim((string) ($student['card_number'] ?? ''));
+                        if ($personId === '' || $fullName === '') {
+                            continue;
+                        }
+                        $dni = $cardNumber !== '' ? $cardNumber : $personId;
+                        $statement->execute([
+                            'person_id' => $personId,
+                            'dni' => $dni,
+                            'full_name' => $fullName,
+                            'institutional_email' => 'pendiente+' . $personId . '@local.invalid',
+                            'card_number' => $cardNumber !== '' ? $cardNumber : null,
+                        ]);
+                        $imported++;
+                    }
+                    $success = "Sincronización completada: {$imported} estudiante(s) importado(s) desde {$deviceLabel}. Completa DNI y correo en la base de datos.";
+                } else {
+                    $error = is_array($syncResult) ? (string) ($syncResult['error_message'] ?? 'No se pudieron leer los estudiantes del biométrico.') : 'El conector no devolvió una respuesta válida.';
+                }
+            } else {
+                $error = 'No se pudo iniciar el conector de sincronización.';
+            }
+        }
+    }
+
     $personId = trim((string) ($_POST['person_id'] ?? ''));
     $dni = trim((string) ($_POST['dni'] ?? ''));
+    $cardNumber = $dni;
     $fullName = trim((string) ($_POST['full_name'] ?? ''));
     $email = trim((string) ($_POST['institutional_email'] ?? ''));
 
-    if ($personId === '' || $dni === '' || $fullName === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if ($action === 'register' && ($personId === '' || $dni === '' || $fullName === '' || !filter_var($email, FILTER_VALIDATE_EMAIL))) {
         $error = 'Completa todos los campos con datos válidos.';
-    } else {
+    } elseif ($action === 'register') {
         try {
             $statement = $database->prepare(
-                'INSERT INTO students (person_id, dni, full_name, institutional_email)
-                 VALUES (:person_id, :dni, :full_name, :institutional_email)'
+                'INSERT INTO students (person_id, card_number, dni, full_name, institutional_email)
+                 VALUES (:person_id, :card_number, :dni, :full_name, :institutional_email)
+                 ON DUPLICATE KEY UPDATE card_number = VALUES(card_number), dni = VALUES(dni), full_name = VALUES(full_name), institutional_email = VALUES(institutional_email), active = 1'
             );
             $statement->execute([
                 'person_id' => $personId,
+                'card_number' => $cardNumber !== '' ? $cardNumber : null,
                 'dni' => $dni,
                 'full_name' => $fullName,
                 'institutional_email' => $email,
@@ -120,7 +190,39 @@ $students = $database === null ? [] : $database->query(
                     <h2 class="dash-card-title"><span class="dash-card-icon"><i class="bi bi-person-plus"></i></span> Registrar estudiante</h2>
                 </div>
                 <div class="dash-card-body">
+                    <form method="post" class="mb-4">
+                        <input type="hidden" name="action" value="sync">
+                        <div class="row g-4 align-items-end">
+                            <div class="col-md-4">
+                                <div class="dash-form-group">
+                                    <label class="form-label">Biométrico</label>
+                                    <select name="device_label" class="dash-input" required>
+                                        <option value="">Selecciona un equipo</option>
+                                        <?php foreach ($devices as $device): ?>
+                                            <option value="<?= htmlspecialchars($device['label'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($device['label'] . ' (' . $device['host'] . ')', ENT_QUOTES, 'UTF-8') ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="dash-form-group">
+                                    <label class="form-label">Usuario</label>
+                                    <input type="text" name="username" class="dash-input" value="admin" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="dash-form-group">
+                                    <label class="form-label">Contraseña del equipo</label>
+                                    <input type="password" name="password" class="dash-input" required>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="dash-btn dash-btn-primary w-100"><i class="bi bi-arrow-repeat"></i> Sincronizar</button>
+                            </div>
+                        </div>
+                    </form>
                     <form method="post">
+                        <input type="hidden" name="action" value="register">
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="dash-form-group">
@@ -133,7 +235,7 @@ $students = $database === null ? [] : $database->query(
                             </div>
                             <div class="col-md-6">
                                 <div class="dash-form-group">
-                                    <label class="form-label">DNI</label>
+                                    <label class="form-label">DNI / identificación del biométrico</label>
                                     <div class="dash-input-wrapper">
                                         <i class="bi bi-card-text dash-input-icon"></i>
                                         <input type="text" name="dni" class="dash-input" maxlength="32" required>

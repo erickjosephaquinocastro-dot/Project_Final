@@ -78,6 +78,7 @@ sacbaeRequireAuthentication();
                                 <th>Fecha</th>
                                 <th>Dispositivo</th>
                                 <th>Tarjeta</th>
+                                <th>DNI</th>
                                 <th>Nombre</th>
                                 <th>Correo institucional</th>
                                 <th>Person ID</th>
@@ -145,20 +146,20 @@ sacbaeRequireAuthentication();
                 }
                 eventsBody.innerHTML = '';
                 if (!payload.events || payload.events.length === 0) {
-                    eventsBody.innerHTML = '<tr><td colspan="10" class="empty text-center text-muted py-4">Esperando eventos...</td></tr>';
+                    eventsBody.innerHTML = '<tr><td colspan="11" class="empty text-center text-muted py-4">Esperando eventos...</td></tr>';
                     return;
                 }
                 payload.events.forEach(event => {
                     const row = document.createElement('tr');
                     const date = `${event.year}-${String(event.month).padStart(2, '0')}-${String(event.day).padStart(2, '0')} ${String(event.hour).padStart(2, '0')}:${String(event.minute).padStart(2, '0')}:${String(event.second).padStart(2, '0')}`;
                     const employeeName = event.employee_name && event.employee_name.trim() ? event.employee_name : 'Sin nombre';
-                    [date, event.device_name, event.card_number, employeeName, event.institutional_email, event.employee_number, event.door, event.reader, event.verify, event.event_type].forEach(value => {
+                    [date, event.device_name, event.card_number, event.dni, employeeName, event.institutional_email, event.employee_number, event.door, event.reader, event.verify, event.event_type].forEach(value => {
                         const cell = document.createElement('td'); cell.textContent = text(value); row.appendChild(cell);
                     });
                     eventsBody.appendChild(row);
                 });
             } catch (error) {
-                eventsBody.innerHTML = '<tr><td colspan="10" class="empty text-center text-danger py-4">No se pudo leer el archivo de eventos.</td></tr>';
+                eventsBody.innerHTML = '<tr><td colspan="11" class="empty text-center text-danger py-4">No se pudo leer el archivo de eventos.</td></tr>';
             }
         }
 

@@ -49,12 +49,14 @@ foreach ($eventFiles as $deviceName => $eventFile) {
             if (is_array($event)) {
                 $event['device_name'] = $deviceName;
                 $personId = trim((string) ($event['employee_number'] ?? ''));
+                $cardNumber = trim((string) ($event['card_number'] ?? ''));
                 $student = null;
-                if ($database !== null && $personId !== '') {
-                    if (!array_key_exists($personId, $studentCache)) {
-                        $studentCache[$personId] = sacbaeFindStudent($database, $personId);
+                if ($database !== null && ($personId !== '' || $cardNumber !== '')) {
+                    $studentCacheKey = $cardNumber . '|' . $personId;
+                    if (!array_key_exists($studentCacheKey, $studentCache)) {
+                        $studentCache[$studentCacheKey] = sacbaeFindStudent($database, $personId, $cardNumber);
                     }
-                    $student = $studentCache[$personId];
+                    $student = $studentCache[$studentCacheKey];
                 }
 
                 if (is_array($student)) {
@@ -74,7 +76,7 @@ foreach ($eventFiles as $deviceName => $eventFile) {
                         'student_id' => $student['id'] ?? null,
                         'person_id' => $personId !== '' ? $personId : null,
                         'device_name' => $deviceName,
-                        'card_number' => $event['card_number'] ?? null,
+                        'card_number' => $cardNumber !== '' ? $cardNumber : null,
                         'occurred_at' => str_starts_with($occurredAt, '0000-') ? null : $occurredAt,
                         'door_number' => $event['door'] ?? null,
                         'reader_number' => $event['reader'] ?? null,
@@ -92,14 +94,16 @@ foreach ($eventFiles as $deviceName => $eventFile) {
 if ($database !== null) {
     $database->exec(
         'UPDATE attendance_events e
-         INNER JOIN students s ON s.person_id = e.person_id AND s.active = 1
+         INNER JOIN students s ON s.active = 1
+             AND ((e.card_number IS NOT NULL AND e.card_number <> \'\' AND s.card_number = e.card_number)
+                  OR (e.person_id IS NOT NULL AND e.person_id <> \'\' AND s.person_id = e.person_id))
          SET e.student_id = s.id
          WHERE e.student_id IS NULL'
     );
     $storedEvents = $database->query(
         'SELECT e.person_id, e.device_name, e.card_number, e.occurred_at, e.door_number,
                 e.reader_number, e.verification_number, e.event_type, e.raw_event,
-                s.full_name, s.institutional_email
+                s.full_name, s.dni, s.institutional_email
          FROM attendance_events e
          LEFT JOIN students s ON s.id = e.student_id
          ORDER BY e.occurred_at DESC, e.id DESC
@@ -127,6 +131,7 @@ if ($database !== null) {
         $event['event_type'] = $storedEvent['event_type'] ?? $event['event_type'] ?? null;
         if ($storedEvent['full_name'] !== null) {
             $event['employee_name'] = $storedEvent['full_name'];
+            $event['dni'] = $storedEvent['dni'];
             $event['institutional_email'] = $storedEvent['institutional_email'];
         }
         $events[] = $event;

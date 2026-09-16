@@ -44,6 +44,7 @@ INSERT IGNORE INTO biometric_devices (label, host, sdk_port, event_file) VALUES
 CREATE TABLE IF NOT EXISTS students (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     person_id VARCHAR(64) NOT NULL,
+    card_number VARCHAR(64) NULL,
     dni VARCHAR(32) NOT NULL,
     full_name VARCHAR(160) NOT NULL,
     institutional_email VARCHAR(190) NOT NULL,
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS students (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uq_students_person_id (person_id),
+    KEY idx_students_card_number (card_number),
     UNIQUE KEY uq_students_dni (dni),
     UNIQUE KEY uq_students_institutional_email (institutional_email)
 ) ENGINE=InnoDB;

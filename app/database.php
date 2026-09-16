@@ -30,12 +30,20 @@ function sacbaeDatabase(): ?PDO
     return $connection;
 }
 
-function sacbaeFindStudent(PDO $database, string $personId): ?array
+function sacbaeFindStudent(PDO $database, string $personId, string $cardNumber = ''): ?array
 {
     $statement = $database->prepare(
         'SELECT id, person_id, dni, full_name, institutional_email
-         FROM students WHERE person_id = :person_id AND active = 1 LIMIT 1'
+         FROM students
+         WHERE active = 1
+           AND ((:card_number <> \'\' AND card_number = :card_number) OR (:person_id <> \'\' AND person_id = :person_id))
+         ORDER BY CASE WHEN :card_number_order <> \'\' AND card_number = :card_number_order THEN 0 ELSE 1 END
+         LIMIT 1'
     );
-    $statement->execute(['person_id' => $personId]);
+    $statement->execute([
+        'card_number' => $cardNumber,
+        'person_id' => $personId,
+        'card_number_order' => $cardNumber,
+    ]);
     return $statement->fetch() ?: null;
 }

@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
+#include <vector>
 #include <condition_variable>
 #include <chrono>
 #include "HCNetSDK.h"
@@ -25,6 +26,13 @@ std::unordered_map<DWORD, std::string> employeeNames;
 std::mutex cardNamesMutex;
 std::condition_variable cardNamesReady;
 bool cardNamesFinished = false;
+struct DeviceStudent
+{
+    DWORD employeeNumber;
+    std::string cardNumber;
+    std::string name;
+};
+std::vector<DeviceStudent> deviceStudents;
 
 std::string TrimNullTerminatedString(const std::string& value)
 {
@@ -108,7 +116,7 @@ void CALLBACK CardConfigCallback(DWORD callbackType, void* buffer, DWORD bufferL
         const auto* card = static_cast<const NET_DVR_CARD_CFG_V50*>(buffer);
         const std::string cardNumber = TrimNullTerminatedString(std::string(reinterpret_cast<const char*>(card->byCardNo), ACS_CARD_NO_LEN));
         const std::string name = TrimNullTerminatedString(std::string(reinterpret_cast<const char*>(card->byName), NAME_LEN));
-        if (!cardNumber.empty() && !name.empty())
+        if (!name.empty() && (card->dwEmployeeNo != 0 || !cardNumber.empty()))
         {
             std::lock_guard<std::mutex> lock(cardNamesMutex);
             cardNames[cardNumber] = name;
@@ -116,6 +124,7 @@ void CALLBACK CardConfigCallback(DWORD callbackType, void* buffer, DWORD bufferL
             {
                 employeeNames[card->dwEmployeeNo] = name;
             }
+            deviceStudents.push_back({card->dwEmployeeNo, cardNumber, name});
         }
         return;
     }
@@ -272,15 +281,16 @@ BOOL WINAPI ConsoleHandler(DWORD signal)
 int main(int argc, char* argv[])
 {
     const bool listenMode = argc == 6 && std::string(argv[1]) == "--listen";
-    if (argc != 4 && !listenMode)
+    const bool syncMode = argc == 5 && std::string(argv[1]) == "--sync";
+    if (argc != 4 && !listenMode && !syncMode)
     {
         std::cout << "{\"ok\":false,\"stage\":\"input\",\"error_message\":\"Usage: hikvision-connector.exe <host> <port> <username> or --listen <host> <port> <username> <events-file>, password on stdin\"}" << std::endl;
         return 2;
     }
 
-    const int hostIndex = listenMode ? 2 : 1;
-    const int portIndex = listenMode ? 3 : 2;
-    const int usernameIndex = listenMode ? 4 : 3;
+    const int hostIndex = listenMode || syncMode ? 2 : 1;
+    const int portIndex = listenMode || syncMode ? 3 : 2;
+    const int usernameIndex = listenMode || syncMode ? 4 : 3;
     unsigned short port = 0;
     if (!IsValidPort(argv[portIndex], port) || std::string(argv[hostIndex]).empty() || std::string(argv[usernameIndex]).empty())
     {
@@ -377,6 +387,23 @@ int main(int argc, char* argv[])
         {
             Sleep(500);
         }
+    }
+    else if (syncMode)
+    {
+        LoadCardNames(userId);
+        std::cout << "{\"ok\":true,\"stage\":\"students\",\"students\":[";
+        for (std::size_t index = 0; index < deviceStudents.size(); ++index)
+        {
+            if (index != 0)
+            {
+                std::cout << ',';
+            }
+            const DeviceStudent& student = deviceStudents[index];
+            std::cout << "{\"person_id\":\"" << student.employeeNumber
+                      << "\",\"card_number\":\"" << JsonEscape(student.cardNumber)
+                      << "\",\"full_name\":\"" << JsonEscape(student.name) << "\"}";
+        }
+        std::cout << "]}" << std::endl;
     }
 
     if (alarmHandle >= 0)
